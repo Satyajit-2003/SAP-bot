@@ -19,7 +19,7 @@ def send_details():
     with open("attndance.csv", "r") as f:
         reader = csv.reader(f)
         for row in reader:
-            msg += f'''
+            msg = f'''
 Subject : {row[0]}
 Total Classes : {row[1]}
 Classes Present : {row[7]}
@@ -28,7 +28,7 @@ Prsent Percentage : {row[2]}
 Faculty : {row[6]}
 
 '''
-    send_msg(msg)
+            send_msg(msg)
 
 def extract_data():
     chrome_options = webdriver.ChromeOptions()
