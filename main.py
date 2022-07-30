@@ -39,7 +39,6 @@ def extract_data():
     driver = webdriver.Chrome( chrome_options=chrome_options, executable_path=os.environ.get("CHROMEDRIVER_PATH"))
     driver.get("https://kiitportal.kiituniversity.net/irj/portal/")
 
-    Credentials = extract_password()
     # Logging in
     driver.find_element(
         "xpath", '//*[@id="logonuidfield"]').send_keys(os.environ.get("USERNAME"))
