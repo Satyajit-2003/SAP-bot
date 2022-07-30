@@ -59,13 +59,12 @@ def extract_data():
 
     ele = driver.find_elements(
         'xpath', '//*[@class="urTxtStd"]')
-    #document.querySelector("#Link4c1d4655").scrollIntoView()
 
     for i in ele:
         if i.text == 'Student Attendance Details':
             i.click()
             break
-    sleep(5)
+    sleep(10)
 
     driver.switch_to.frame(driver.find_element(
         'xpath', '//*[@id="isolatedWorkArea"]'))
@@ -73,7 +72,7 @@ def extract_data():
     driver.find_element('xpath', '//*[@id="WD74"]').send_keys("Autumn")
     driver.find_element('xpath', '//*[@id="WD81"]').click()
 
-    sleep(4)
+    sleep(8)
     #open csv file attndance.csv and create writer object
     with open('attndance.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
