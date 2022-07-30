@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 import pickle
 from time import sleep
 import requests
