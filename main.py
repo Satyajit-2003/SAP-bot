@@ -92,6 +92,8 @@ def extract_data():
     driver.quit()
 
 if __name__ == "__main__":
-    extract_data()
-    send_details()
+    while 1: 
+        extract_data()
+        send_details()
+        sleep(3600)
 
