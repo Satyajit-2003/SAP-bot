@@ -4,23 +4,20 @@ from time import sleep
 import requests
 import csv
 import os
-
-def extract_password():
-    with open("pass.pkl", "rb") as f:
-        dc = pickle.load(f)
-    return dc
+from config import *
 
 def send_msg(msg):
     #replace every & in msg with %20
     msg = msg.replace("&", "%26")
-    requests.get(f"https://api.telegram.org/bot{os.environ.get('TELEGRAM_BOT_API')}/sendMessage?chat_id={os.environ.get('TELEGRAM_CHAT_ID')}&text="+ msg)
+    requests.get(f"https://api.telegram.org/bot{CONFIG.TELEGRAM_BOT_API}/sendMessage?chat_id={CONFIG.TELEGRAM_CHAT_ID}&text="+ msg)
 
 def send_details():
     msg = ''
     with open("attndance.csv", "r") as f:
         reader = csv.reader(f)
+        msg = ''
         for row in reader:
-            msg = f'''
+            msg += f'''
 Subject : {row[0]}
 Total Classes : {row[1]}
 Classes Present : {row[7]}
@@ -29,22 +26,22 @@ Prsent Percentage : {row[2]}
 Faculty : {row[6]}
 
 '''
-            send_msg(msg)
+        send_msg(msg)
 
 def extract_data():
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.binary_location = CONFIG.GOOGLE_CHROME_BIN
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome( chrome_options=chrome_options, executable_path=os.environ.get("CHROMEDRIVER_PATH"))
+    driver = webdriver.Chrome( chrome_options=chrome_options, executable_path=CONFIG.CHROMEDRIVER_PATH)
     driver.get("https://kiitportal.kiituniversity.net/irj/portal/")
 
     # Logging in
     driver.find_element(
-        "xpath", '//*[@id="logonuidfield"]').send_keys(os.environ.get("USERNAME"))
+        "xpath", '//*[@id="logonuidfield"]').send_keys(CONFIG.USERNAME)
     driver.find_element(
-        "xpath", '//*[@id="logonpassfield"]').send_keys(os.environ.get("PASSWORD"))
+        "xpath", '//*[@id="logonpassfield"]').send_keys(CONFIG.PASSWORD)
     driver.find_element(
         "xpath", '//*[@id="certLogonForm"]/table/tbody/tr[5]/td[2]/input').click()
     sleep(1)
