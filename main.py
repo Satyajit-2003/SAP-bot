@@ -4,7 +4,7 @@ from time import sleep
 import requests
 import csv
 import os
-from config import *
+from config import CONFIG
 
 def send_msg(msg):
     #replace every & in msg with %20
@@ -66,8 +66,8 @@ def extract_data():
 
     driver.switch_to.frame(driver.find_element(
         'xpath', '//*[@id="isolatedWorkArea"]'))
-    driver.find_element('xpath', '//*[@id="WD5C"]').send_keys("2022-2023")
-    driver.find_element('xpath', '//*[@id="WD74"]').send_keys("Autumn")
+    driver.find_element('xpath', '//*[@id="WD5C"]').send_keys(CONFIG.SESSION)
+    driver.find_element('xpath', '//*[@id="WD74"]').send_keys(CONFIG.SEMESTER)
     driver.find_element('xpath', '//*[@id="WD81"]').click()
 
     sleep(8)
