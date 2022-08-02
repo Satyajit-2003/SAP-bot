@@ -20,10 +20,8 @@ def send_details():
             msg += f'''
 Subject : {row[0]}
 Total Classes : {row[1]}
-Classes Present : {row[7]}
 Classes Absent : {row[3]}
 Prsent Percentage : {row[2]}
-Faculty : {row[6]}
 
 '''
         send_msg(msg)
