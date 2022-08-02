@@ -34,7 +34,7 @@ def extract_data():
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome( chrome_options=chrome_options, executable_path=CONFIG.CHROMEDRIVER_PATH)
+    driver = webdriver.Chrome(options=chrome_options, executable_path=CONFIG.CHROMEDRIVER_PATH)
     driver.get("https://kiitportal.kiituniversity.net/irj/portal/")
 
     # Logging in

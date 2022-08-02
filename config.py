@@ -14,8 +14,8 @@ class configurations():
 
 
         ###----DO NOT EDIT BELOW THIS CONFIGURATION---##
-        self.CHROMEDRIVER_PATH = os.environ.get("CHROMEDRIVER_PATH")
-        self.GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN")
+        self.CHROMEDRIVER_PATH = os.environ.get("CHROMEDRIVER_PATH") or '.\chromedriver.exe'
+        self.GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN") or r'C:\Program Files\Google\Chrome\Application\chrome.exe'
 
 CONFIG = configurations()
 
