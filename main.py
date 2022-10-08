@@ -1,35 +1,45 @@
 from selenium import webdriver
-import pickle
 from time import sleep
 import requests
 import csv
 import os
 from config import CONFIG
 
-def send_msg(msg):
+def send_msg(msg, chat_id):
     #replace every & in msg with %20
     msg = msg.replace("&", "%26")
-    requests.get(f"https://api.telegram.org/bot{CONFIG.TELEGRAM_BOT_API}/sendMessage?chat_id={CONFIG.TELEGRAM_CHAT_ID}&text="+ msg)
+    requests.get(f"https://api.telegram.org/bot{CONFIG.TELEGRAM_BOT_API}/sendMessage?chat_id={chat_id}&text="+ msg)
 
-def send_details():
+def send_details(roll, chat_id):
     msg = ''
-    with open("attndance.csv", "r") as f:
+    with open(f"attndance_{roll}.csv", "r") as f:
         reader = csv.reader(f)
         msg = ''
         for row in reader:
             msg += f'''
 Subject : {row[0]}
 Total Classes : {row[1]}
-Classes Absent : {row[3]}
+Classes Absent : {row[4]}
 Prsent Percentage : {row[2]}
 
 '''
-        send_msg(msg)
+        send_msg(msg, chat_id)
 
-def extract_data():
+def send_warnings(roll, chat_id):
+    with open(f"attndance_{roll}.csv", "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if float(row[2]) < 80:
+                msg = f'''
+WARNING: Your attendance in {row[0]} is {row[2]}
+DON'T MISS ANY CLASSES
+'''
+                send_msg(msg, chat_id)
+
+def extract_data(roll, password):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.binary_location = CONFIG.GOOGLE_CHROME_BIN
-    chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(options=chrome_options, executable_path=CONFIG.CHROMEDRIVER_PATH)
@@ -37,9 +47,9 @@ def extract_data():
 
     # Logging in
     driver.find_element(
-        "xpath", '//*[@id="logonuidfield"]').send_keys(CONFIG.USERNAME)
+        "xpath", '//*[@id="logonuidfield"]').send_keys(roll)
     driver.find_element(
-        "xpath", '//*[@id="logonpassfield"]').send_keys(CONFIG.PASSWORD)
+        "xpath", '//*[@id="logonpassfield"]').send_keys(password)
     driver.find_element(
         "xpath", '//*[@id="certLogonForm"]/table/tbody/tr[5]/td[2]/input').click()
     sleep(1)
@@ -47,30 +57,36 @@ def extract_data():
     # Navigating to student self support
     driver.find_element("xpath", '//*[@id="navNodeAnchor_1_1"]').click()
     sleep(3)
+    #switching to working area frame
     driver.switch_to.frame(driver.find_element(
-        'xpath', '//*[@id="ivuFrm_page0ivu3"]'))
-
+        'xpath', '//*[@id="ivuFrm_page0ivu4"]'))
+    #going to student self support page
     driver.find_element('xpath', '//*[@class="urLnkDragRelate"]').click()
     sleep(3)
 
+    # finding all the sub menu items
     ele = driver.find_elements(
         'xpath', '//*[@class="urTxtStd"]')
-
+    #clicking student attendance details
     for i in ele:
         if i.text == 'Student Attendance Details':
             i.click()
             break
     sleep(10)
 
+    #switching to working area frame
     driver.switch_to.frame(driver.find_element(
         'xpath', '//*[@id="isolatedWorkArea"]'))
-    driver.find_element('xpath', '//*[@id="WD5C"]').send_keys(CONFIG.SESSION)
-    driver.find_element('xpath', '//*[@id="WD74"]').send_keys(CONFIG.SEMESTER)
-    driver.find_element('xpath', '//*[@id="WD81"]').click()
+
+    #It keeps changing to find it again, go to the element, and find the id
+    #EG : <input id="WD6A" ....>
+    driver.find_element('xpath', '//*[@id="WD52"]').send_keys(CONFIG.SESSION)
+    driver.find_element('xpath', '//*[@id="WD6A"]').send_keys(CONFIG.SEMESTER)
+    driver.find_element('xpath', '//*[@id="WD77"]').click()
 
     sleep(8)
     #open csv file attndance.csv and create writer object
-    with open('attndance.csv', 'w', newline='') as csvfile:
+    with open(f'attndance_{roll}.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         var = 2
         while 1:
