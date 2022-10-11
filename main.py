@@ -6,7 +6,7 @@ import os
 from config import CONFIG
 
 def send_msg(msg, chat_id):
-    #replace every & in msg with %20
+    #replace every & in msg with %26
     msg = msg.replace("&", "%26")
     requests.get(f"https://api.telegram.org/bot{CONFIG.TELEGRAM_BOT_API}/sendMessage?chat_id={chat_id}&text="+ msg)
 
@@ -58,8 +58,15 @@ def extract_data(roll, password):
     driver.find_element("xpath", '//*[@id="navNodeAnchor_1_1"]').click()
     sleep(3)
     #switching to working area frame
-    driver.switch_to.frame(driver.find_element(
-        'xpath', '//*[@id="ivuFrm_page0ivu4"]'))
+    #This keeps changing between 3 and 4
+    try:
+        driver.switch_to.frame(driver.find_element(
+            'xpath', '//*[@id="ivuFrm_page0ivu4"]'))
+    except:
+        driver.switch_to.frame(driver.find_element(
+            'xpath', '//*[@id="ivuFrm_page0ivu3"]'))
+
+    
     #going to student self support page
     driver.find_element('xpath', '//*[@class="urLnkDragRelate"]').click()
     sleep(3)
