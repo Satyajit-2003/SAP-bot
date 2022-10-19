@@ -4,8 +4,8 @@ from config import CONFIG
 msg_sched = BlockingScheduler()
 warn_sched = BlockingScheduler()
 
-# @msg_sched.scheduled_job('interval', seconds=10)
-@msg_sched.scheduled_job('interval', hours = int(CONFIG.TIME_INTERVAL))
+# @msg_sched.scheduled_job('interval', hours = int(CONFIG.TIME_INTERVAL))
+@msg_sched.scheduled_job('interval', seconds=10)
 def timed_job():
     print(f'This job is runs every {CONFIG.TIME_INTERVAL} hours and send attendance by Telegram Bot')
     user_list = CONFIG.USERNAME.split(',')
