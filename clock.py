@@ -15,6 +15,7 @@ def timed_job():
         extract_data(user_list[i].strip(), pass_list[i].strip())
         send_details(user_list[i].strip(), chat_id_list[i].strip())
 
+# @warn_sched.scheduled_job('interval', seconds=10)
 @warn_sched.scheduled_job('cron', hour='16', minute='30')
 def scheduled_job():
     print("This job sends warning message to the user everyday at 4:30 PM GMT i.e. 10:00 PM IST")
