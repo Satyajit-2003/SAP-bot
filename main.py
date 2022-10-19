@@ -57,7 +57,7 @@ DON'T MISS ANY CLASSES
 def extract_data(roll, password):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.binary_location = CONFIG.GOOGLE_CHROME_BIN
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(options=chrome_options, executable_path=CONFIG.CHROMEDRIVER_PATH)
