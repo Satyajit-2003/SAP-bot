@@ -134,9 +134,5 @@ def extract_data(roll, password):
 
     driver.quit()
 
-# if __name__ == "__main__":
-#     while 1: 
-#         extract_data()
-#         send_details()
-#         sleep(3600)
+
 
