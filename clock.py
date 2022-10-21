@@ -19,7 +19,7 @@ def warn_sending_job():
     for i in range(len(user_list)):
         send_warnings(user_list[i].strip(), chat_id_list[i].strip())
 
-job_sched.add_job(msg_sending_job, 'interval', hours = int(CONFIG.TIME_INTERVAL))
+job_sched.add_job(msg_sending_job, 'interval', seconds = 180)
 job_sched.add_job(warn_sending_job, 'cron', hour='16', minute='30')
 
 print("Starting the scheduler")
