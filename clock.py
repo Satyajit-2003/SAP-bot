@@ -19,8 +19,12 @@ def warn_sending_job():
     for i in range(len(user_list)):
         send_warnings(user_list[i].strip(), chat_id_list[i].strip())
 
-job_sched.add_job(msg_sending_job, 'interval', seconds = 180)
-job_sched.add_job(warn_sending_job, 'cron', hour='16', minute='30')
+#Send attendance at 9 AM IST and 9 PM IST
+job_sched.add_job(msg_sending_job, 'cron', hour = '3', minute = '30')
+job_sched.add_job(msg_sending_job, 'cron', hour = '15', minute = '30')
+#Send warning at 9:30 AM IST and 9:30 PM IST
+job_sched.add_job(warn_sending_job, 'cron', hour='16', minute='00')
+job_sched.add_job(warn_sending_job, 'cron', hour='4', minute='30')
 
 print("Starting the scheduler")
 job_sched.start()
