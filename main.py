@@ -25,6 +25,7 @@ def send_details(roll, chat_id):
                 total_class_row = row.index("Total No. of Days")
                 class_absent_row = row.index("No.of Absent")
                 pres_perc_row = row.index("Total Percentage")
+                absent_affordable_row = row.index('Absents affordable')
                 head_found = True
                 continue
 
@@ -33,6 +34,7 @@ Subject : {row[sub_row]}
 Total Classes : {row[total_class_row]}
 Classes Absent : {row[class_absent_row]}
 Prsent Percentage : {row[pres_perc_row]}
+Absents Affordable : {row[absent_affordable_row]}
 
 '''
         send_msg(msg, chat_id)
@@ -119,6 +121,9 @@ def extract_data(roll, password):
         details_list = []
         for i in range(2, 11):
             details_list.append(driver.find_element('xpath', f'/html/body/table/tbody/tr/td/div/div[1]/span/span[3]/div/div/table/tbody/tr[2]/td/table/tbody/tr/td[1]/table/tbody/tr[1]/th[{i}]/div/table/tbody/tr/td/div/span/span').text)
+        total_class_index = details_list.index('Total No. of Days')
+        absent_class_index = details_list.index('No.of Absent')
+        details_list.append('Absents affordable')
         writer.writerow(details_list)
         var = 2
         while 1:
@@ -126,6 +131,14 @@ def extract_data(roll, password):
                 details_list = []
                 for i in range(2,11):
                     details_list.append(driver.find_element('xpath', f'/html/body/table/tbody/tr/td/div/div[1]/span/span[3]/div/div/table/tbody/tr[2]/td/table/tbody/tr/td[1]/table/tbody/tr[{var}]/td[{i}]/span/span').text)
+                abs_days = float(details_list[absent_class_index])
+                total = float(details_list[total_class_index])
+                perc = (abs_days/total) *100
+                while perc <= 25:
+                    abs_days = abs_days +1
+                    total = total +1
+                    perc = (abs_days/total) *100
+                details_list.append(abs_days-float(details_list[absent_class_index])-1)
                 writer.writerow(details_list)
                 print(details_list)
             except:
