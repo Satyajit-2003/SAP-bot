@@ -47,12 +47,19 @@ def send_warnings(roll, chat_id):
             if (not head_found):
                 sub_row = row.index("Subject")
                 pres_perc_row = row.index("Total Percentage")
+                absent_affordable_row = row.index('Absents affordable')
                 head_found = True
                 continue
             if float(row[pres_perc_row]) < 80:
+                if int(row[absent_affordable_row]) > 0:
+                    msg = f'''
+WARNING: Your attendance in {row[sub_row]} is {row[pres_perc_row]}
+{row[absent_affordable_row]} ABSENTS CAN BE AFFORDED
+'''
+            else:
                 msg = f'''
 WARNING: Your attendance in {row[sub_row]} is {row[pres_perc_row]}
-DON'T MISS ANY CLASSES
+NO ABSENTS CAN BE AFFORDED
 '''
                 send_msg(msg, chat_id)
 
@@ -63,15 +70,20 @@ def extract_data(roll, password):
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(options=chrome_options, executable_path=CONFIG.CHROMEDRIVER_PATH)
-    driver.get("https://kiitportal.kiituniversity.net/irj/portal/")
 
-    # Logging in
-    driver.find_element(
-        "xpath", '//*[@id="logonuidfield"]').send_keys(roll)
-    driver.find_element(
-        "xpath", '//*[@id="logonpassfield"]').send_keys(password)
-    driver.find_element(
-        "xpath", '//*[@id="certLogonForm"]/table/tbody/tr[5]/td[2]/input').click()
+    while 1:
+        try:
+            # trying Logging in
+            driver.get("https://kiitportal.kiituniversity.net/irj/portal/")
+            driver.find_element(
+                "xpath", '//*[@id="logonuidfield"]').send_keys(roll)
+            driver.find_element(
+                "xpath", '//*[@id="logonpassfield"]').send_keys(password)
+            driver.find_element(
+                "xpath", '//*[@id="certLogonForm"]/table/tbody/tr[5]/td[2]/input').click()
+            break
+        except:
+            continue
     sleep(1)
 
     # Navigating to student self support
