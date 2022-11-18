@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from time import sleep
+from time import sleep, ctime
 import requests
 import csv
 import os
@@ -26,6 +26,7 @@ def send_details(roll, chat_id):
                 class_absent_row = row.index("No.of Absent")
                 pres_perc_row = row.index("Total Percentage")
                 absent_affordable_row = row.index('Absents affordable')
+                msg += f'Updation time: {row[-1]}\n\n'
                 head_found = True
                 continue
 
@@ -56,8 +57,8 @@ def send_warnings(roll, chat_id):
 WARNING: Your attendance in {row[sub_row]} is {row[pres_perc_row]}
 {row[absent_affordable_row]} ABSENTS CAN BE AFFORDED
 '''
-            else:
-                msg = f'''
+                else:
+                    msg = f'''
 WARNING: Your attendance in {row[sub_row]} is {row[pres_perc_row]}
 NO ABSENTS CAN BE AFFORDED
 '''
@@ -71,7 +72,8 @@ def extract_data(roll, password):
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(options=chrome_options, executable_path=CONFIG.CHROMEDRIVER_PATH)
 
-    while 1:
+    tries = 0
+    while tries < 100:
         try:
             # trying Logging in
             driver.get("https://kiitportal.kiituniversity.net/irj/portal/")
@@ -83,6 +85,11 @@ def extract_data(roll, password):
                 "xpath", '//*[@id="certLogonForm"]/table/tbody/tr[5]/td[2]/input').click()
             break
         except:
+            if tries == 99:
+                print(f"Login attempt failed for {roll} at time {ctime()}")
+                return
+            tries += 1
+            sleep(120)
             continue
     sleep(1)
 
@@ -122,8 +129,8 @@ def extract_data(roll, password):
     WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.ID, "WD52"))
     )
-    driver.find_element('xpath', '//*[@id="WD52"]').send_keys(CONFIG.SESSION)
     driver.find_element('xpath', '//*[@id="WD6A"]').send_keys(CONFIG.SEMESTER)
+    driver.find_element('xpath', '//*[@id="WD52"]').send_keys(CONFIG.SESSION)
     driver.find_element('xpath', '//*[@id="WD77"]').click()
 
     sleep(8)
@@ -136,6 +143,7 @@ def extract_data(roll, password):
         total_class_index = details_list.index('Total No. of Days')
         absent_class_index = details_list.index('No.of Absent')
         details_list.append('Absents affordable')
+        details_list.append(ctime())
         writer.writerow(details_list)
         var = 2
         while 1:
@@ -150,7 +158,7 @@ def extract_data(roll, password):
                     abs_days = abs_days +1
                     total = total +1
                     perc = (abs_days/total) *100
-                details_list.append(abs_days-float(details_list[absent_class_index])-1)
+                details_list.append(int(abs_days-float(details_list[absent_class_index])-1))
                 writer.writerow(details_list)
                 print(details_list)
             except:
