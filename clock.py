@@ -26,7 +26,7 @@ def warn_sending_job():
 
 # job_sched.add_job(data_extracting_job, 'interval', seconds=10) #For testing purpose
 #Extracts data every 3 hours
-job_sched.add_job(data_extracting_job, 'interval', hours=CONFIG.TIME_INTERVAL)
+job_sched.add_job(data_extracting_job, 'interval', hours=int(CONFIG.TIME_INTERVAL))
 #Send attendance at 9 AM IST and 9 PM IST
 job_sched.add_job(msg_sending_job, 'cron', hour = '3', minute = '30')
 job_sched.add_job(msg_sending_job, 'cron', hour = '15', minute = '30')
