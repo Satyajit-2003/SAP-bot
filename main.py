@@ -94,7 +94,10 @@ def extract_data(roll, password):
     sleep(1)
 
     # Navigating to student self support
-    driver.find_element("xpath", '//*[@id="navNodeAnchor_1_1"]').click()
+    try:
+        driver.find_element("xpath", '//*[@id="navNodeAnchor_1_1"]').click()
+    except:
+        pass
     sleep(3)
     #switching to working area frame
     #This keeps changing between 3 and 4
@@ -127,19 +130,24 @@ def extract_data(roll, password):
     #It keeps changing to find it again, go to the element, and find the id
     #EG : <input id="WD6A" ....>
     WebDriverWait(driver, 30).until(
-        EC.presence_of_element_located((By.ID, "WD52"))
+        EC.presence_of_element_located((By.ID, "WD77"))
     )
-    driver.find_element('xpath', '//*[@id="WD6A"]').send_keys(CONFIG.SEMESTER)
     driver.find_element('xpath', '//*[@id="WD52"]').send_keys(CONFIG.SESSION)
-    driver.find_element('xpath', '//*[@id="WD77"]').click()
+    driver.find_element('xpath', '//*[@id="WD6E"]').send_keys(CONFIG.SEMESTER)
+    driver.find_element('xpath', '//*[@id="WD7B"]').click()
 
     sleep(8)
     #open csv file attndance.csv and create writer object
     with open(f'attndance_{roll}.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         details_list = []
-        for i in range(2, 11):
-            details_list.append(driver.find_element('xpath', f'/html/body/table/tbody/tr/td/div/div[1]/span/span[3]/div/div/table/tbody/tr[2]/td/table/tbody/tr/td[1]/table/tbody/tr[1]/th[{i}]/div/table/tbody/tr/td/div/span/span').text)
+        i = 2
+        while 1:
+            try:
+                details_list.append(driver.find_element('xpath', f'/html/body/table/tbody/tr/td/div/div[1]/span/span[3]/div/div/table/tbody/tr[2]/td/table/tbody/tr/td[1]/table/tbody/tr[1]/th[{i}]/div/table/tbody/tr/td/div/span/span').text)
+                i = i + 1
+            except:
+                break
         total_class_index = details_list.index('Total No. of Days')
         absent_class_index = details_list.index('No.of Absent')
         details_list.append('Absents affordable')
@@ -149,8 +157,13 @@ def extract_data(roll, password):
         while 1:
             try:
                 details_list = []
-                for i in range(2,11):
-                    details_list.append(driver.find_element('xpath', f'/html/body/table/tbody/tr/td/div/div[1]/span/span[3]/div/div/table/tbody/tr[2]/td/table/tbody/tr/td[1]/table/tbody/tr[{var}]/td[{i}]/span/span').text)
+                i = 2
+                while 1:
+                    try:
+                        details_list.append(driver.find_element('xpath', f'/html/body/table/tbody/tr/td/div/div[1]/span/span[3]/div/div/table/tbody/tr[2]/td/table/tbody/tr/td[1]/table/tbody/tr[{var}]/td[{i}]/span/span').text)
+                        i = i + 1
+                    except:
+                        break
                 abs_days = float(details_list[absent_class_index])
                 total = float(details_list[total_class_index])
                 perc = (abs_days/total) *100
