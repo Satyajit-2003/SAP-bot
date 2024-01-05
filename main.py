@@ -73,7 +73,7 @@ def extract_data(roll, password):
     driver = webdriver.Chrome(options=chrome_options, executable_path=CONFIG.CHROMEDRIVER_PATH)
 
     tries = 0
-    while tries < 100:
+    while tries < 10:
         try:
             # trying Logging in
             driver.get("https://kiitportal.kiituniversity.net/irj/portal/")
@@ -85,11 +85,11 @@ def extract_data(roll, password):
                 "xpath", '//*[@id="certLogonForm"]/table/tbody/tr[5]/td[2]/input').click()
             break
         except:
-            if tries == 99:
+            if tries == 9:
                 print(f"Login attempt failed for {roll} at time {ctime()}")
                 return
             tries += 1
-            sleep(120)
+            sleep(30)
             continue
     sleep(1)
 
